@@ -1,28 +1,27 @@
 from datetime import datetime
-import datetime
-from typing import List, Any
+from typing import List, Optional
 
 
 class Transaction:
     SELL = 1
     SUPPLY = 2
 
-    def _init_(self, type: int, copies: int):
-        self.type = type
+    def __init__(self, transaction_type: int, copies: int):
+        self.type = transaction_type
         self.copies = copies
-        self.date = datetime.datetime.now()
+        self.date = datetime.now()
 
 
 class Disc:
-    def _init_(self, sid: str, title: str, artist: str, sale_price: float, purchase_price: float, quantity: int):
+    def __init__(self, sid: str, title: str, artist: str, sale_price: float, purchase_price: float, quantity: int):
         self.sid = sid
         self.title = title
         self.artist = artist
         self.sale_price = sale_price
         self.purchase_price = purchase_price
         self.quantity = quantity
-        self.transactions = []
-        self.song_list = []
+        self.transactions: List[Transaction] = []
+        self.song_list: List[str] = []
 
     def add_song(self, song: str):
         self.song_list.append(song)
@@ -39,24 +38,24 @@ class Disc:
         self.transactions.append(Transaction(Transaction.SUPPLY, copies))
 
     def copies_sold(self) -> int:
-        return sum(t.copies for t in self.transactions if t.type == Transaction.SELL)
+        return sum(transaction.copies for transaction in self.transactions if transaction.type == Transaction.SELL)
 
-    def _str_(self) -> str:
+    def __str__(self) -> str:
         return f"SID: {self.sid}\nTitle: {self.title}\nArtist: {self.artist}\nSong List: {', '.join(self.song_list)}"
 
 
 class MusicStore:
-    def _init_(self):
-        self.discs = {}
+    def __init__(self):
+        self.discs: dict[str, Disc] = {}
 
     def add_disc(self, sid: str, title: str, artist: str, sale_price: float, purchase_price: float, quantity: int):
         if sid not in self.discs:
             self.discs[sid] = Disc(sid, title, artist, sale_price, purchase_price, quantity)
 
-    def search_by_sid(self, sid: str) -> 'Disc | None':
-        return self.discs.get(sid)
+    def search_by_sid(self, sid: str) -> Optional[Disc]:
+        return self.discs.get(sid, None)
 
-    def search_by_artist(self, artist: str) -> list['Disc']:
+    def search_by_artist(self, artist: str) -> List[Disc]:
         return [disc for disc in self.discs.values() if disc.artist == artist]
 
     def sell_disc(self, sid: str, copies: int) -> bool:
@@ -72,7 +71,7 @@ class MusicStore:
         disc.supply(copies)
         return True
 
-    def worst_selling_disc(self) -> 'Disc | None':
+    def worst_selling_disc(self) -> Optional[Disc]:
         if not self.discs:
             return None
-        return min(self.discs.values(), key=lambda disc: disc.copies_sold())
+        return min(self.discs.values(), key=lambda disc: disc.copies_sold(), default=None)
