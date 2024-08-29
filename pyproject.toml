@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "musicstore"
+version = "0.1.0"
+description = "A simple music store app for a object oriented programming course"
+authors = ["Jesus Hincapie <jahlon@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pytest = "^8.3.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.scripts]
+musicstore = "musicstore.app:main"
